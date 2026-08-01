@@ -1,0 +1,24 @@
+generated: '2026-07-21'
+method: searched
+source: https://developer.amazon.com/docs/ring/api-documentation.html
+versioning:
+  scheme: uri-path
+  current: v1
+  docs: https://developer.amazon.com/docs/ring/api-documentation.html#endpoint-reference
+  notes: >-
+    Endpoints are namespaced under /v1 (e.g. /v1/devices). Webhook payloads carry their own
+    version marker (v1.1). Cursor pagination is described as "included for forward
+    compatibility", signaling planned additive evolution.
+release_notes: https://developer.amazon.com/docs/ring/release-notes.html
+status_page: https://status.ring.com/
+deprecation:
+  policy_url: null
+  sunset_header: false
+  notes: >-
+    No formal deprecation / Sunset (RFC 8594) policy was found published in the Ring Developer
+    documentation as of this pass. Program requirements and the App Store certification process
+    govern app lifecycle rather than a documented API deprecation schedule.
+sla:
+  url: null
+  uptime_target: null
+deprecated_operations: []

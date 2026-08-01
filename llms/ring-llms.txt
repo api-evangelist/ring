@@ -1,0 +1,76 @@
+# Ring
+
+> Ring is an Amazon home-security company (video doorbells, cameras, alarm systems, and the
+> Ring Protect subscription). In 2026 Ring launched the Ring Developer platform and Ring
+> Appstore, letting certified partners build video-powered apps against the Ring Partner API
+> (Amazon Vision API / AVA) — a JSON:API-format REST API secured with OAuth 2.0 one-way
+> account linking. Ring also publishes a remote MCP server so AI coding assistants can query
+> the documentation while building integrations.
+
+## Overview
+
+- Base URL: https://api.amazonvision.com
+- Auth: OAuth 2.0 authorization-code + refresh; token endpoint https://oauth.ring.com/oauth/token; Bearer tokens (expires_in 14400s); server-to-server only.
+- Format: JSON:API. Content types application/json, application/sdp (live video), binary (media downloads).
+- Rate limit: 100 TPS per partner client_id; 429 with Retry-After.
+- Pagination: JSON:API cursor (page[cursor], links.next), fixed page size 25.
+
+## Developer
+
+- Developer Portal: https://developer.ring.com/
+- Getting Started: https://developer.amazon.com/docs/ring/get-started.html
+- API Reference: https://developer.amazon.com/docs/ring/api-documentation.html
+- Developer Console: https://developer.amazon.com/ring/console
+- Release Notes: https://developer.amazon.com/docs/ring/release-notes.html
+- Status: https://status.ring.com/
+- Support: https://support.ring.com/
+- Blog: https://blog.ring.com/
+
+## MCP
+
+- Ring Appstore Knowledge MCP Server (streamable-http): https://knowledge.appstore-mcp.ring.amazon.dev/mcp
+- Tools: search_docs, get_doc (RAG over Ring Appstore docs, backed by Amazon Bedrock Knowledge Base).
+
+## Endpoints (v1)
+
+- GET /v1/devices — list devices (?include=status,capabilities,location,configurations)
+- GET /v1/devices/{device_id} — get a device
+- GET /v1/devices/{device_id}/status — online/offline status
+- GET /v1/devices/{device_id}/capabilities — codecs, motion, image enhancements
+- GET /v1/devices/{device_id}/location — coarse location for compliance
+- GET /v1/devices/{device_id}/configurations — motion/privacy zones, image settings
+- GET /v1/history/devices/{device_id}/events — event history
+- POST /v1/devices/{device_id}/media/streaming/whep/sessions — start WebRTC/WHEP live video
+- DELETE /v1/devices/{device_id}/media/streaming/whep/sessions/{session_id} — close session
+- POST /v1/devices/{device_id}/media/video/download — download media clip
+- POST /v1/devices/{device_id}/media/image/download — download image snapshot
+- GET /v1/users/me — authenticated user's Account ID
+- GET/POST /v1/accounts/me/app-integrations — manage app integrations
+- GET /v1/accounts/me/subscriptions — query subscriptions
+
+## Webhooks
+
+- v1.1 payload, HMAC-verified, POST to a partner endpoint; deduplicate on meta.request_id.
+- Events: motion_detected, button_press, device_added, device_removed, device_online, device_offline, app_integration_added, app_integration_removed, subscription_activated, subscription_deactivated.
+
+## Repo artifacts
+
+- apis.yml — API Evangelist APIs.json profile
+- authentication/ring-authentication.yml — OAuth 2.0 profile
+- conventions/ring-conventions.yml — pagination, idempotency, rate limits, error envelope
+- errors/ring-problem-types.yml — HTTP/JSON:API error catalog
+- asyncapi/ring-webhooks.yml — webhook event catalog
+- mcp/ring-mcp.yml — Ring Appstore MCP server manifest
+- data-model/ring-data-model.yml — entity/relationship graph
+- conformance/ring-conformance.yml — standards conformance
+- lifecycle/ring-lifecycle.yml — versioning + status page
+- packages/ring-packages.yml — community libraries (no official SDK)
+- well-known/ring-well-known.yml — /.well-known discovery index
+- security/ — domain security + vulnerability disclosure (HackerOne bug bounty)
+
+## Legal
+
+- Privacy: https://ring.com/privacy-notice
+- Terms: https://ring.com/terms
+- Pricing (Ring Protect): https://ring.com/protect-plans
+- Security / bug bounty: https://ring.com/.well-known/security.txt

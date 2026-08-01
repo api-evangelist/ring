@@ -1,8 +1,35 @@
+x-enrichment:
+  date: '2026-07-21'
+  status: enriched
+  artifacts_added: 14
+  pass: local-v1
 aid: ring
 name: Ring
-description: Ring is a company surfaced as a portfolio company of bond-capital, crv, first-round-capital,
-  true-ventures and added to the API Evangelist network as a stub for enrichment. This profile is a lead
-  awaiting the enrichment pipeline.
+description: >-
+  Ring is an Amazon home-security company (doorbells, cameras, alarm systems, and the Ring
+  Protect subscription) that in 2026 launched the Ring Developer platform and Ring Appstore.
+  Third-party developers can build video-powered apps against the Ring Partner API — a REST
+  API served from api.amazonvision.com (Amazon Vision API / AVA) that follows the JSON:API
+  format and is secured with OAuth 2.0 one-way account linking. The API exposes device
+  discovery, device status/capabilities/location/configurations, event history, WebRTC/WHEP
+  live video, media clip and image downloads, subscription queries, and a webhook event
+  surface (motion, button press, device online/offline, subscription changes). Ring also
+  publishes a remote Model Context Protocol (MCP) server backed by an Amazon Bedrock
+  Knowledge Base so AI coding assistants can query the documentation while building
+  integrations, and publishes a HackerOne bug-bounty via a /.well-known/security.txt.
+accessModel:
+  pricing: unknown
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Self-serve signup
+  confidence: medium
+  source:
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://developer.ring.com/og-image.png
 url: https://raw.githubusercontent.com/api-evangelist/ring/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
@@ -11,14 +38,59 @@ x-backed-by:
 - crv
 - first-round-capital
 - true-ventures
-x-tier: stub
-x-tier-reason: portfolio-lead
+x-tier: profiled
+x-tier-reason: has-developer-platform
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-17'
+modified: '2026-07-21'
 tags:
 - Company
-apis: []
+- Home Security
+- Smart Home
+- IoT
+- Video
+- Cameras
+- Doorbells
+- Webhooks
+- WebRTC
+- Amazon
+- Developer Platform
+- MCP
+apis:
+- name: Ring Partner API
+  description: >-
+    The Ring Partner API (Amazon Vision API / AVA) lets certified Ring Appstore partners
+    access Ring device data and media on behalf of consenting users: list and inspect devices,
+    read status/capabilities/location/configurations, pull event history, stream live video
+    over WebRTC/WHEP, download media clips and image snapshots, and query subscriptions. All
+    endpoints follow the JSON:API format and require an OAuth 2.0 Bearer token obtained through
+    one-way account linking; requests must be made server-to-server.
+  humanURL: https://developer.amazon.com/docs/ring/api-documentation.html
+  baseURL: https://api.amazonvision.com
+  tags:
+  - Home Security
+  - Video
+  - Devices
+  - Webhooks
+  properties:
+  - type: Documentation
+    url: https://developer.amazon.com/docs/ring/api-documentation.html
+  - type: APIReference
+    url: https://developer.amazon.com/docs/ring/api-documentation.html#endpoint-reference
+  - type: Authentication
+    url: authentication/ring-authentication.yml
+  - type: Webhooks
+    url: asyncapi/ring-webhooks.yml
+  - type: ErrorCatalog
+    url: errors/ring-problem-types.yml
+  - type: Conventions
+    url: conventions/ring-conventions.yml
+  - type: Idempotency
+    url: conventions/ring-conventions.yml
+  - type: DataModel
+    url: data-model/ring-data-model.yml
+  - type: Conformance
+    url: conformance/ring-conformance.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -27,3 +99,59 @@ maintainers:
 common:
 - type: Website
   url: https://ring.com
+- type: DeveloperPortal
+  url: https://developer.ring.com/
+- type: Documentation
+  url: https://developer.amazon.com/docs/ring/api-documentation.html
+- type: APIReference
+  url: https://developer.amazon.com/docs/ring/api-documentation.html#endpoint-reference
+- type: GettingStarted
+  url: https://developer.amazon.com/docs/ring/get-started.html
+- type: MCPServer
+  url: mcp/ring-mcp.yml
+- type: Authentication
+  url: authentication/ring-authentication.yml
+- type: Webhooks
+  url: asyncapi/ring-webhooks.yml
+- type: ErrorCatalog
+  url: errors/ring-problem-types.yml
+- type: Conventions
+  url: conventions/ring-conventions.yml
+- type: Idempotency
+  url: conventions/ring-conventions.yml
+- type: Lifecycle
+  url: lifecycle/ring-lifecycle.yml
+- type: StatusPage
+  url: https://status.ring.com/
+- type: Conformance
+  url: conformance/ring-conformance.yml
+- type: DataModel
+  url: data-model/ring-data-model.yml
+- type: Packages
+  url: packages/ring-packages.yml
+- type: LLMsTxt
+  url: llms/ring-llms.txt
+- type: WellKnown
+  url: well-known/ring-well-known.yml
+- type: SecurityTxt
+  url: well-known/ring-security.txt
+- type: DomainSecurity
+  url: security/ring-domain-security.yml
+- type: VulnerabilityDisclosure
+  url: security/ring-vulnerability-disclosure.yml
+- type: Security
+  url: https://ring.com/.well-known/security.txt
+- type: ChangeLog
+  url: https://developer.amazon.com/docs/ring/release-notes.html
+- type: Support
+  url: https://support.ring.com/
+- type: Blog
+  url: https://blog.ring.com/
+- type: Pricing
+  url: https://ring.com/protect-plans
+- type: PrivacyPolicy
+  url: https://ring.com/privacy-notice
+- type: TermsOfService
+  url: https://ring.com/terms
+- type: Store
+  url: https://ring.com/appstore

@@ -1,0 +1,48 @@
+generated: '2026-07-21'
+method: searched
+source: https://developer.amazon.com/docs/ring/api-documentation.html#webhook-events
+spec_type: Webhooks
+transport: HTTPS POST to a partner-registered webhook endpoint
+payload_version: v1.1
+authentication:
+  verification: HMAC signature verification
+  notes: >-
+    Webhook requests are signed; handlers must verify the signature before processing. Each
+    request carries meta.request_id (use as idempotency key), meta.time (ISO 8601), and
+    account_id (the Ring user the event belongs to).
+delivery:
+  retry: >-
+    Ring retries failed deliveries; the same event may be delivered more than once. Handlers
+    must be idempotent (deduplicate on meta.request_id or event id) and return 2xx promptly.
+  ordering: not guaranteed
+events:
+- type: motion_detected
+  name: Motion Detected
+  description: Motion detected by a device camera; may include subType (e.g. human).
+- type: button_press
+  name: Button Press
+  description: A Ring doorbell button was pressed.
+- type: device_added
+  name: Device Added
+  description: A device became accessible to the partner.
+- type: device_removed
+  name: Device Removed
+  description: A device is no longer accessible to the partner.
+- type: device_online
+  name: Device Online
+  description: A device came online.
+- type: device_offline
+  name: Device Offline
+  description: A device went offline.
+- type: app_integration_added
+  name: App Integration Added
+  description: A user added (linked) the partner app integration.
+- type: app_integration_removed
+  name: App Integration Removed
+  description: A user removed (unlinked) the partner app integration.
+- type: subscription_activated
+  name: Subscription Activated
+  description: A relevant Ring Protect subscription was activated.
+- type: subscription_deactivated
+  name: Subscription Deactivated
+  description: A relevant Ring Protect subscription was deactivated.

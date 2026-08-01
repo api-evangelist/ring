@@ -1,0 +1,35 @@
+generated: '2026-07-21'
+method: searched
+source: https://developer.amazon.com/docs/ring/api-documentation.html
+standards:
+- id: oauth2
+  conforms: true
+  evidence: >-
+    Authentication is OAuth 2.0 authorization-code flow with refresh tokens; token endpoint
+    https://oauth.ring.com/oauth/token, Bearer access tokens (expires_in 14400).
+- id: json-api
+  conforms: true
+  evidence: "All device and media endpoint responses follow the JSON:API format."
+- id: webrtc-whep
+  conforms: true
+  evidence: >-
+    Live video uses WebRTC with the WHEP (WebRTC-HTTP Egress Protocol) signaling; sessions
+    started via POST /v1/devices/{device_id}/media/streaming/whep/sessions with
+    Content-Type application/sdp.
+- id: webhooks
+  conforms: true
+  evidence: >-
+    Documented webhook event surface (v1.1 payload) with HMAC signature verification and
+    retry/idempotency semantics.
+- id: rfc6750-bearer
+  conforms: true
+  evidence: "Access tokens presented as Authorization: Bearer <access_token>."
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: "Errors use the JSON:API error format, not application/problem+json."
+- id: rfc8594-sunset
+  conforms: false
+  evidence: No Sunset/Deprecation header policy documented.
+- id: openapi
+  conforms: false
+  evidence: No machine-readable OpenAPI description is published; the reference is HTML documentation only.

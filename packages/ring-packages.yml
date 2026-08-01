@@ -1,0 +1,25 @@
+generated: '2026-07-21'
+method: searched
+source: https://developer.amazon.com/docs/ring/api-documentation.html#sdks-and-libraries
+note: >-
+  Ring explicitly states there is NO official Ring Partner SDK — the docs recommend standard
+  HTTP libraries (fetch, requests, axios) plus curl / Postman / Bruno for testing. The packages
+  listed below are community/unofficial libraries (they target the legacy consumer app API, not
+  the new Partner / Amazon Vision API) and are marked official: false. No first-party SDK
+  pointer is emitted.
+official_sdk: false
+packages:
+- language: javascript
+  registry: npm
+  name: ring-client-api
+  url: https://www.npmjs.com/package/ring-client-api
+  install: npm install ring-client-api
+  official: false
+  description: Unofficial community API for Ring doorbells, cameras, alarm systems, and smart lighting.
+- language: python
+  registry: pypi
+  name: ring-doorbell
+  url: https://pypi.org/project/ring-doorbell/
+  install: pip install ring-doorbell
+  official: false
+  description: Unofficial community Python library to communicate with Ring devices.

@@ -1,0 +1,36 @@
+generated: '2026-07-21'
+method: searched
+source: https://developer.amazon.com/docs/ring/api-documentation.html#error-responses
+format: json:api
+envelope: >-
+  All errors follow the JSON:API error format (a top-level errors[] array with objects
+  carrying status, title, and detail). Errors are keyed primarily by HTTP status code.
+problems:
+- status: 400
+  title: Bad Request
+  detail: Invalid parameters.
+  remediation: Validate request parameters and body against the endpoint reference.
+- status: 401
+  title: Unauthorized
+  detail: Invalid or expired token.
+  remediation: Refresh the OAuth 2.0 access token (grant_type=refresh_token) and retry.
+- status: 403
+  title: Forbidden
+  detail: Insufficient permissions.
+  remediation: Confirm the user completed account linking and the app was granted the required access.
+- status: 404
+  title: Not Found
+  detail: Resource not found.
+  remediation: Verify the device_id / session_id exists and is accessible to the partner.
+- status: 429
+  title: Too Many Requests
+  detail: Rate limit exceeded (default 100 TPS per partner client_id).
+  remediation: Honor the Retry-After header and apply exponential backoff starting at 1 second.
+- status: 500
+  title: Internal Server Error
+  detail: An unexpected error occurred on the Ring service.
+  remediation: Retry with backoff; if persistent, contact Ring developer support.
+- status: 503
+  title: Service Unavailable
+  detail: Device offline (the target Ring device is not currently reachable).
+  remediation: Check device status via GET /v1/devices/{device_id}/status before retrying media operations.

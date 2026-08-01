@@ -1,0 +1,35 @@
+generated: '2026-07-21'
+method: searched
+source: https://developer.amazon.com/docs/ring/api-documentation.html#authentication
+docs: https://developer.amazon.com/docs/ring/api-documentation.html#token-exchange-flow
+summary:
+  types: [oauth2]
+  oauth2_flows: [authorizationCode]
+  transport: Bearer token in Authorization header
+  account_linking: one-way (Ring user grants a partner app access)
+  server_to_server: true
+schemes:
+- name: OAuth2
+  type: oauth2
+  scheme: bearer
+  description: >-
+    All Ring Partner API requests require an OAuth 2.0 Bearer access token in the
+    Authorization header (Authorization: Bearer <access_token>). Tokens are obtained through
+    a one-way account-linking authorization-code flow with HMAC nonce verification. Access
+    tokens are short-lived (expires_in 14400 seconds / 4 hours) and are renewed with the
+    refresh token. All requests to the Amazon Vision API and the Ring OAuth server must be
+    made server-to-server from the partner backend — browser-initiated requests are blocked
+    by CORS.
+  flows:
+  - flow: authorizationCode
+    tokenUrl: https://oauth.ring.com/oauth/token
+    grant_types: [authorization_code, refresh_token]
+    token_lifetime_seconds: 14400
+    token_type: Bearer
+  sources:
+  - https://developer.amazon.com/docs/ring/api-documentation.html
+notes: >-
+  Scopes are returned in the token response (scope field) but Ring does not publish an
+  enumerated scope reference; the granted scope is set by the partner app configuration in
+  the Ring Developer Console. Credentials (client_id / client_secret) are issued per
+  application in the Amazon Ring Developer Console.

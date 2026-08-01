@@ -1,0 +1,68 @@
+generated: '2026-07-21'
+method: derived
+source: https://developer.amazon.com/docs/ring/api-documentation.html#endpoint-reference
+note: >-
+  Derived from the documented Ring Partner API endpoint reference (no OpenAPI is published).
+  Entities and relationships are inferred from the resource paths, include parameters, and
+  webhook payload fields. Responses follow the JSON:API format, so relationships map to
+  JSON:API resource linkage.
+entities:
+- name: Account
+  description: The authenticated Ring user/account a partner app is linked to.
+  id_field: account_id
+  endpoints:
+  - GET /v1/users/me
+  - GET /v1/accounts/me/app-integrations
+  - POST /v1/accounts/me/app-integrations
+  - GET /v1/accounts/me/subscriptions
+- name: Device
+  description: A Ring device (camera or doorbell) accessible to the partner.
+  id_field: device_id
+  endpoints:
+  - GET /v1/devices
+  - GET /v1/devices/{device_id}
+  sub_resources:
+  - status (GET /v1/devices/{device_id}/status)
+  - capabilities (GET /v1/devices/{device_id}/capabilities)
+  - location (GET /v1/devices/{device_id}/location)
+  - configurations (GET /v1/devices/{device_id}/configurations)
+- name: Event
+  description: A historical device event (motion, button press, etc.).
+  endpoints:
+  - GET /v1/history/devices/{device_id}/events
+- name: MediaSession
+  description: A WebRTC/WHEP live-video streaming session for a device.
+  id_field: session_id
+  endpoints:
+  - POST /v1/devices/{device_id}/media/streaming/whep/sessions
+  - DELETE /v1/devices/{device_id}/media/streaming/whep/sessions/{session_id}
+- name: Media
+  description: Downloadable recorded video clips and image snapshots for a device.
+  endpoints:
+  - POST /v1/devices/{device_id}/media/video/download
+  - POST /v1/devices/{device_id}/media/image/download
+- name: Subscription
+  description: A Ring Protect subscription relevant to the partner integration.
+  endpoints:
+  - GET /v1/accounts/me/subscriptions
+relationships:
+- from: Account
+  to: Device
+  type: has_many
+  via: account linking (devices accessible to the linked partner app)
+- from: Device
+  to: Event
+  type: has_many
+  via: device_id
+- from: Device
+  to: MediaSession
+  type: has_many
+  via: device_id
+- from: Device
+  to: Media
+  type: has_many
+  via: device_id
+- from: Account
+  to: Subscription
+  type: has_many
+  via: account_id

@@ -1,0 +1,56 @@
+generated: '2026-07-21'
+method: searched
+source: https://developer.amazon.com/docs/ring/api-documentation.html
+api: Ring Partner API (Amazon Vision API / AVA)
+base_url: https://api.amazonvision.com
+media_type: "application/vnd.api+json (JSON:API format)"
+authentication:
+  style: "OAuth 2.0 Bearer token (Authorization: Bearer <access_token>)"
+  detail: authentication/ring-authentication.yml
+content_types:
+  json: application/json
+  live_video: application/sdp
+  media_download: binary content with appropriate MIME types
+pagination:
+  style: cursor
+  spec: "JSON:API cursor pagination"
+  request_param: page[cursor]
+  response_field: links.next
+  page_size: fixed at 25 items
+  notes: >-
+    Cursor-based pagination is included for forward compatibility; at current subscription
+    volumes most responses fit in a single page. Follow links.next to page forward.
+idempotency:
+  supported: true
+  scope: webhook event delivery (consumer-side)
+  key_field: meta.request_id
+  guidance: >-
+    Ring may deliver the same webhook event more than once due to retries or network issues.
+    Webhook handlers MUST be idempotent — deduplicate deliveries using the meta.request_id
+    field (or the event id). Each webhook request carries a unique request_id intended for use
+    as an idempotency key. Ring does not document a request-side Idempotency-Key header for the
+    read-only device/media endpoints (which are safe to retry).
+rate_limiting:
+  default: 100 requests per second (TPS) per partner client_id
+  scope: applies per partner client_id across all endpoints
+  headers:
+  - X-RateLimit-Limit
+  - X-RateLimit-Remaining
+  - Retry-After
+  on_exceed: HTTP 429 Too Many Requests; use exponential backoff starting at 1s and respect Retry-After
+error_envelope:
+  format: "JSON:API errors"
+  detail: errors/ring-problem-types.yml
+versioning:
+  scheme: uri-path
+  current: v1
+  detail: lifecycle/ring-lifecycle.yml
+webhooks:
+  detail: asyncapi/ring-webhooks.yml
+  payload_version: v1.1
+  verification: HMAC signature verification (webhook authentication & verification)
+cross_links:
+  authentication: authentication/ring-authentication.yml
+  errors: errors/ring-problem-types.yml
+  lifecycle: lifecycle/ring-lifecycle.yml
+  webhooks: asyncapi/ring-webhooks.yml
