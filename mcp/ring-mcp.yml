@@ -6,19 +6,17 @@ server:
   name: ring-appstore-knowledge-mcp-server
   transport: streamable-http
   url: https://knowledge.appstore-mcp.ring.amazon.dev/mcp
-  description: >-
-    The Ring Appstore Knowledge MCP Server is a remote Model Context Protocol server backed by
-    an Amazon Bedrock Knowledge Base. It connects an AI coding assistant (Kiro, Cursor, Cline,
-    Claude Desktop) to the Ring Appstore / Ring Partner API documentation so the assistant can
-    search and retrieve accurate API references, integration guides, and code examples in-IDE.
-    This is a documentation-knowledge server (RAG over the docs), not a device-control server.
+  description: The Ring Appstore Knowledge MCP Server is a remote Model Context Protocol server backed
+    by an Amazon Bedrock Knowledge Base. It connects an AI coding assistant (Kiro, Cursor, Cline, Claude
+    Desktop) to the Ring Appstore / Ring Partner API documentation so the assistant can search and retrieve
+    accurate API references, integration guides, and code examples in-IDE. This is a documentation-knowledge
+    server (RAG over the docs), not a device-control server.
   backend: Amazon Bedrock Knowledge Base
 tools:
 - name: search_docs
-  description: >-
-    Search the Ring Appstore knowledge base and return ranked documentation results filtered by
-    confidence. Returns status, an overall confidence score, results[] (content, score,
-    metadata.source), and followUpQuestions[].
+  description: Search the Ring Appstore knowledge base and return ranked documentation results filtered
+    by confidence. Returns status, an overall confidence score, results[] (content, score, metadata.source),
+    and followUpQuestions[].
   parameters:
   - name: query
     type: string
@@ -35,19 +33,26 @@ tools:
     default: '0.2'
     description: Minimum confidence score threshold (0.0 to 1.0).
 - name: get_doc
-  description: >-
-    Fetch the complete content of a specific documentation file or web page, typically used
+  description: Fetch the complete content of a specific documentation file or web page, typically used
     after search_docs to retrieve the full text of a result.
   parameters:
   - name: uri
     type: string
     required: true
-    description: A file path from search_docs results (e.g., "api/authentication.md") or a Ring documentation URL.
+    description: A file path from search_docs results (e.g., "api/authentication.md") or a Ring documentation
+      URL.
 clients:
 - Kiro IDE
 - Cursor
 - Cline (VS Code)
 - Claude Desktop
-notes: >-
-  Known issue: the Kiro CLI (not the IDE) cannot authorize with the Ring Appstore MCP due to an
-  authorization-URL construction bug; use the Kiro IDE as a workaround.
+notes: 'Known issue: the Kiro CLI (not the IDE) cannot authorize with the Ring Appstore MCP due to an
+  authorization-URL construction bug; use the Kiro IDE as a workaround.'
+deployment:
+  mode: remote
+  endpoint: https://knowledge.appstore-mcp.ring.amazon.dev/mcp
+  verified: probed
+  probe: live
+  tools: 2
+  checked: '2026-08-12'
+  source: catalog MCP census
