@@ -49,6 +49,19 @@ tags:
 - Smart Home
 - IoT
 - Video
+- Camera
+- Doorbells
+- Webhook
+- WebRTC
+- Amazon
+- Developer Platform
+- MCP
+tags_raw:
+- Company
+- Home Security
+- Smart Home
+- IoT
+- Video
 - Cameras
 - Doorbells
 - Webhooks
@@ -68,6 +81,11 @@ apis:
   humanURL: https://developer.amazon.com/docs/ring/api-documentation.html
   baseURL: https://api.amazonvision.com
   tags:
+  - Home Security
+  - Video
+  - Devices
+  - Webhook
+  tags_raw:
   - Home Security
   - Video
   - Devices
