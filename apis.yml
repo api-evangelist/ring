@@ -17,6 +17,17 @@ description: >-
   publishes a remote Model Context Protocol (MCP) server backed by an Amazon Bedrock
   Knowledge Base so AI coding assistants can query the documentation while building
   integrations, and publishes a HackerOne bug-bounty via a /.well-known/security.txt.
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: false
+  label: Hosted service · you call their endpoint
+  confidence: medium
+  source:
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: unknown
   onboarding: self-serve
