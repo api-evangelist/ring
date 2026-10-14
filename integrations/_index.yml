@@ -16,3 +16,16 @@
   relationship: platform-app
   status: not-a-workflow
   arazzo: null
+- slug: ring-toast-own
+  label: Toast (own)
+  partner: toast
+  partner_name: Toast (own)
+  category: Kiosk
+  type: marketplace
+  marketplace: own
+  channel: partner-built
+  evidence: https://pos.toasttab.com/partners/directory/ring
+  source: edge
+  relationship: platform-app
+  status: not-a-workflow
+  arazzo: null
