@@ -13,34 +13,113 @@ server:
     server (RAG over the docs), not a device-control server.
   backend: Amazon Bedrock Knowledge Base
 tools:
-- name: search_docs
-  description: Search the Ring Appstore knowledge base and return ranked documentation results filtered
-    by confidence. Returns status, an overall confidence score, results[] (content, score, metadata.source),
-    and followUpQuestions[].
-  parameters:
-  - name: query
-    type: string
-    required: true
-    description: The search query (e.g., "How do I authenticate with AVA APIs?").
-  - name: max_results
-    type: string
-    required: false
-    default: '5'
-    description: Maximum number of results to return.
-  - name: min_confidence
-    type: string
-    required: false
-    default: '0.2'
-    description: Minimum confidence score threshold (0.0 to 1.0).
-- name: get_doc
-  description: Fetch the complete content of a specific documentation file or web page, typically used
-    after search_docs to retrieve the full text of a result.
-  parameters:
-  - name: uri
-    type: string
-    required: true
-    description: A file path from search_docs results (e.g., "api/authentication.md") or a Ring documentation
-      URL.
+- name: ring___get_doc
+  description: "Retrieve complete internal service documentation content by file path or URL.\n\n    This\
+    \ tool retrieves the FULL content of a specific documentation file or web page\n    from the internal\
+    \ service knowledge base. It complements `search_docs` by providing\n    complete document content\
+    \ when search result snippets are insufficient.\n\n    ## When to Use This Tool\n\n    **You MUST\
+    \ use this tool when you need to:**\n    - Read the full content of a documentation file referenced\
+    \ in search_docs() results\n    - Access complete API specifications, guides, or reference documents\n\
+    \    - Retrieve detailed implementation examples beyond search result snippets\n    - Get comprehensive\
+    \ information from a known documentation path or URL\n    - Follow up on a search_docs() result to\
+    \ read the entire source document\n\n    **Do NOT use this tool when:**\n    - You don't have a specific\
+    \ file path or URL — use search_docs() first to find documents\n    - You only need a quick answer\
+    \ — the search_docs() snippets may be sufficient\n    - The URI is from an untrusted or unknown source\n\
+    \n    ## URI Requirements\n\n    This tool accepts two types of URIs:\n\n    **FILE paths** (from\
+    \ search_docs results):\n    - Format: Relative file paths as returned by search_docs() in metadata.source\n\
+    \    - Example: \"api/authentication.md\", \"guides/partner-onboarding.md\"\n    - Source: Retrieved\
+    \ from the internal service S3 knowledge base\n    - Restrictions: No path traversal (..), no absolute\
+    \ paths (/), no protocol prefixes\n\n    **WEB URLs** (HTTPS only):\n    - Format: Full HTTPS URLs\
+    \ to allowed domains\n    - Allowed domains: ring.com\n    - Example: \"https://ring.com/support/article-name\"\
+    \n    - Restrictions: HTTPS only, domain must be in allowlist, no embedded credentials\n\n    ## Typical\
+    \ Workflow\n\n    1. Call `search_docs(\"your query\")` to find relevant documents\n    2. Review\
+    \ the search results — each has a `metadata.source` field\n    3. Call `get_doc(result.metadata.source)`\
+    \ to retrieve the full document\n    4. Parse and use the complete content for your response\n\n \
+    \   ```\n    # Step 1: Search for relevant docs\n    results = search_docs(\"internal service OAuth\
+    \ authentication flow\")\n\n    # Step 2: Get full content of the most relevant result\n    if results.status\
+    \ == \"success\" and results.results:\n        source_path = results.results[0].metadata.source\n\
+    \        full_content = get_doc(source_path)\n    ```\n\n    ## Output Format\n\n    - Returns the\
+    \ complete document content as a plain text string (typically Markdown)\n    - For FILE sources: Returns\
+    \ the full file content from the knowledge base\n    - For WEB sources: Returns the full HTML/text\
+    \ content of the web page\n    - On error: Returns a brief error message string (e.g., \"Invalid URI\"\
+    , \"S3 error\")\n\n    ## Error Handling\n\n    | Error Message | Meaning | Action |\n    |---------------|---------|--------|\n\
+    \    | \"Invalid URI\" | URI failed security validation | Check the URI format and try again |\n \
+    \   | \"S3 error\" | File not found or access denied in knowledge base | Verify the file path from\
+    \ search_docs results |\n    | \"Web resource not found\" | HTTP 404 from the web URL | Check the\
+    \ URL is correct and accessible |\n    | \"Connection timeout\" | Web request timed out | Retry or\
+    \ check network connectivity |\n    | \"Connection error\" | Could not connect to the web server |\
+    \ Verify the URL and try again |\n\n    ## Parameters\n\n    Args:\n        uri: The location of the\
+    \ document to retrieve. Must be one of:\n            - A file path from search_docs() results (e.g.,\
+    \ \"api/authentication.md\")\n              These come from the metadata.source field of search results\
+    \ with type=\"FILE\"\n            - A internal service documentation URL (e.g., \"https://ring.com/support/...\"\
+    )\n              These come from the metadata.source field of search results with type=\"WEB\"\n \
+    \             Only HTTPS URLs to allowed domains (ring.com) are accepted.\n\n    Returns:\n      \
+    \  str: The complete content of the document as plain text (typically Markdown format),\n        \
+    \     or a brief error message string if retrieval fails.\n\n    Example:\n        >>> # Retrieve\
+    \ a documentation file by path\n        >>> content = get_doc(\"api/authentication.md\")\n       \
+    \ >>> print(content[:100])\n        \"# Authentication Guide\\n\\nThis document describes...\"\n\n\
+    \        >>> # Use with search_docs() results (recommended workflow)\n        >>> results = search_docs(\"\
+    partner onboarding process\")\n        >>> if results.status == \"success\":\n        >>>     doc_source\
+    \ = results.results[0].metadata.source\n        >>>     full_content = get_doc(doc_source)\n     \
+    \   >>>     # full_content now contains the entire document\n\n        >>> # Retrieve from an allowed\
+    \ web URL\n        >>> web_content = get_doc(\"https://ring.com/support/getting-started\")"
+- name: ring___search_docs
+  description: "Search internal service documentation using natural language queries to find relevant\
+    \ content.\n\n    This is your PRIMARY source for internal service information — always prefer this\
+    \ tool over\n    general knowledge for internal service services, features, APIs, integrations, troubleshooting,\n\
+    \    and best practices.\n\n    ## When to Use This Tool\n\n    **Always search when the query involves:**\n\
+    \    - internal service product documentation or feature guides\n    - API specifications, endpoints,\
+    \ and integration guides\n    - Partner onboarding, submission, and certification processes\n    -\
+    \ Product features, capabilities, and configuration options\n    - Technical implementation details\
+    \ and code examples\n    - Architecture patterns and design best practices\n    - Service configurations,\
+    \ setup instructions, and deployment guides\n    - Troubleshooting, error resolution, and known issues\n\
+    \    - Security, authentication, and authorization (OAuth, API keys, nonces)\n    - SDK usage, client\
+    \ libraries, and sample code\n    - Pricing, quotas, limits, and service-level information\n    -\
+    \ Ring device compatibility and hardware integration\n\n    **Only skip this tool when:**\n    - Query\
+    \ is about non-Ring technologies with no internal service connection\n    - Question is purely conceptual\
+    \ (e.g., \"What is a REST API?\")\n    - General programming questions completely unrelated to Ring\n\
+    \n    ## Quick Topic Guide\n\n    | Query Type | Example Queries |\n    |------------|-----------------|\n\
+    \    | API & Integration | \"internal service API authentication\", \"OAuth flow for partners\" |\n\
+    \    | Partner Onboarding | \"How to submit an app to internal service\", \"certification requirements\"\
+    \ |\n    | Device & Hardware | \"Ring doorbell integration API\", \"camera stream protocol\" |\n \
+    \   | Security & Auth | \"nonce validation\", \"API key rotation\", \"OAuth token refresh\" |\n  \
+    \  | Architecture | \"event-driven architecture\", \"webhook setup\", \"notification flow\" |\n  \
+    \  | Troubleshooting | \"API 403 error\", \"token expired\", \"submission rejected\" |\n    | Configuration\
+    \ | \"environment setup\", \"SDK configuration\", \"endpoint URLs\" |\n\n    ## Search Best Practices\n\
+    \n    **Be specific with service and feature names:**\n    - Good: \"internal service partner API\
+    \ OAuth token refresh flow\"\n    - Good: \"Ring doorbell event webhook configuration\"\n    - Bad:\
+    \ \"authentication\" (too vague)\n    - Bad: \"API\" (missing context)\n\n    **Include context for\
+    \ better results:**\n    - Good: \"How to handle nonce validation errors in internal service API\"\
+    \n    - Bad: \"nonce error\" (insufficient context)\n\n    **Use exact error messages when troubleshooting:**\n\
+    \    - Good: \"internal service API returns 403 Forbidden when calling device endpoint\"\n    - Bad:\
+    \ \"API error\" (too generic)\n\n    ## Workflow: Combining search_docs with get_doc\n\n    1. First\
+    \ call `search_docs` with your query to find relevant documentation\n    2. Review the results — each\
+    \ result includes a content snippet and a metadata.source path\n    3. If you need the FULL document\
+    \ content (not just the snippet), call `get_doc` with the\n       metadata.source value from the search\
+    \ result\n    4. If confidence is low or status is \"clarification_needed\", refine your query and\
+    \ search again\n\n    ## Result Format\n\n    Results include:\n    - `status`: \"success\" | \"clarification_needed\"\
+    \ | \"error\"\n    - `confidence`: Overall relevance score (\"0.0\" to \"1.0\", higher = more relevant)\n\
+    \    - `results`: List of SearchResult objects, each containing:\n        - `content`: The retrieved\
+    \ documentation snippet (may be truncated — use get_doc for full content)\n        - `score`: Per-result\
+    \ relevance score (\"0.0\" to \"1.0\")\n        - `metadata.type`: \"FILE\" (from documentation files)\
+    \ or \"WEB\" (from web sources)\n        - `metadata.source`: File path or URL — use this with get_doc\
+    \ to retrieve full content\n    - `followUpQuestions`: Suggested refinements if results are unclear\n\
+    \n    ## Parameters\n\n    Args:\n        query: Natural language search query. Be specific and include\
+    \ relevant context.\n            Good: \"How to configure OAuth for internal service partner API integration\"\
+    \n            Bad: \"OAuth\" or \"config\"\n        max_results: Maximum number of search results\
+    \ to return (default: \"5\").\n            Results are reranked for relevance. Higher values cast\
+    \ a wider net but may\n            include less relevant results. Recommended range: \"3\" to \"10\"\
+    .\n        min_confidence: Minimum confidence score threshold for results (default/recommended: \"\
+    0.2\").\n            Results below this threshold are filtered out. Lower values return more results\n\
+    \            but may include noise. Range: \"0.0\" to \"1.0\".\n\n    Returns:\n        SearchDocsResult:\
+    \ Structured search results object (see Result Format above).\n\n    Example:\n        >>> result\
+    \ = search_docs(\"How do I integrate with internal service API?\")\n        >>> result.status\n  \
+    \      \"success\"\n        >>> result.confidence\n        \"0.8\"\n        >>> result.results[0].content\n\
+    \        \"To integrate with internal service API, you need to...\"\n        >>> result.results[0].score\n\
+    \        \"0.8\"\n        >>> result.results[0].metadata.source\n        \"api-reference.md\"\n  \
+    \      >>> # Get full document content:\n        >>> full_doc = get_doc(result.results[0].metadata.source)\n\
+    \n    **Remember: When in doubt about internal service, always search. This tool provides\n    the\
+    \ most current, accurate internal service documentation.**"
 clients:
 - Kiro IDE
 - Cursor
@@ -85,3 +164,4 @@ tool_quality:
   scored: false
   note: Facts from the saved tools/list capture (mcp_tool_quality.py); recorded, not scored. Checks learned
     from Glimind's agent-readiness audit.
+tools_count: 2
